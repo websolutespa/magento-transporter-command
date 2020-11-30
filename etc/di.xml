@@ -10,11 +10,8 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="transporter_download" xsi:type="object">Websolute\TransporterCommand\Console\Command\DownloadCommand</item>
-                <item name="transporter_download_dequeue" xsi:type="object">Websolute\TransporterCommand\Console\Command\DownloadDequeueCommand</item>
                 <item name="transporter_manipulate" xsi:type="object">Websolute\TransporterCommand\Console\Command\ManipulateCommand</item>
-                <item name="transporter_manipulate_dequeue" xsi:type="object">Websolute\TransporterCommand\Console\Command\ManipulateDequeueCommand</item>
                 <item name="transporter_upload" xsi:type="object">Websolute\TransporterCommand\Console\Command\UploadCommand</item>
-                <item name="transporter_upload_dequeue" xsi:type="object">Websolute\TransporterCommand\Console\Command\UploadDequeueCommand</item>
             </argument>
         </arguments>
     </type>
@@ -23,29 +20,14 @@
             <argument name="name" xsi:type="string">transporter:download</argument>
         </arguments>
     </type>
-    <type name="Websolute\TransporterCommand\Console\Command\DownloadDequeueCommand">
-        <arguments>
-            <argument name="name" xsi:type="string">transporter:download:dequeue</argument>
-        </arguments>
-    </type>
     <type name="Websolute\TransporterCommand\Console\Command\ManipulateCommand">
         <arguments>
             <argument name="name" xsi:type="string">transporter:manipulate</argument>
         </arguments>
     </type>
-    <type name="Websolute\TransporterCommand\Console\Command\ManipulateDequeueCommand">
-        <arguments>
-            <argument name="name" xsi:type="string">transporter:manipulate:dequeue</argument>
-        </arguments>
-    </type>
     <type name="Websolute\TransporterCommand\Console\Command\UploadCommand">
         <arguments>
             <argument name="name" xsi:type="string">transporter:upload</argument>
-        </arguments>
-    </type>
-    <type name="Websolute\TransporterCommand\Console\Command\UploadDequeueCommand">
-        <arguments>
-            <argument name="name" xsi:type="string">transporter:upload:dequeue</argument>
         </arguments>
     </type>
     <!-- Command end -->
