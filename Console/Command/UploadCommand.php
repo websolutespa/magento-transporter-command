@@ -43,10 +43,10 @@ class UploadCommand extends Command
      * @param TransporterListInterface $transporterList
      */
     public function __construct(
+        $name = null,
         UploadAction $uploadAction,
         Console $consoleLogger,
-        TransporterListInterface $transporterList,
-        $name = null
+        TransporterListInterface $transporterList
     ) {
         parent::__construct($name);
         $this->uploadAction = $uploadAction;

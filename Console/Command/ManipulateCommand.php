@@ -43,10 +43,10 @@ class ManipulateCommand extends Command
      * @param TransporterListInterface $transporterList
      */
     public function __construct(
+        $name = null,
         ManipulateAction $manipulateAction,
         Console $consoleLogger,
-        TransporterListInterface $transporterList,
-        $name = null
+        TransporterListInterface $transporterList
     ) {
         parent::__construct($name);
         $this->manipulateAction = $manipulateAction;
