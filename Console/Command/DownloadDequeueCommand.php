@@ -13,18 +13,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Websolute\TransporterBase\Api\TransporterListInterface;
+use Websolute\TransporterAmqp\Model\Data\DownloaderInfoFactory;
+use Websolute\TransporterAmqp\Model\DownloaderConsumer;
 use Websolute\TransporterBase\Logger\Handler\Console;
-use Websolute\TransporterBase\Model\Action\ManipulateAction;
 
-class ManipulateCommand extends Command
+class DownloadDequeueCommand extends Command
 {
     const TYPE = 'type';
-
-    /**
-     * @var ManipulateAction
-     */
-    private $manipulateAction;
+    const ACTIVITY_ID = 'activity_id';
 
     /**
      * @var Console
@@ -32,26 +28,31 @@ class ManipulateCommand extends Command
     private $consoleLogger;
 
     /**
-     * @var TransporterListInterface
+     * @var DownloaderInfoFactory
      */
-    private $transporterList;
+    private $downloaderInfoFactory;
 
     /**
-     * @param ManipulateAction $manipulateAction
+     * @var DownloaderConsumer
+     */
+    private $downloaderConsumer;
+
+    /**
      * @param Console $consoleLogger
-     * @param TransporterListInterface $transporterList
+     * @param DownloaderInfoFactory $downloaderInfoFactory
+     * @param DownloaderConsumer $downloaderConsumer
      * @param string $name
      */
     public function __construct(
-        ManipulateAction $manipulateAction,
         Console $consoleLogger,
-        TransporterListInterface $transporterList,
+        DownloaderInfoFactory $downloaderInfoFactory,
+        DownloaderConsumer $downloaderConsumer,
         $name = null
     ) {
         parent::__construct($name);
-        $this->manipulateAction = $manipulateAction;
         $this->consoleLogger = $consoleLogger;
-        $this->transporterList = $transporterList;
+        $this->downloaderInfoFactory = $downloaderInfoFactory;
+        $this->downloaderConsumer = $downloaderConsumer;
     }
 
     /**
@@ -59,11 +60,16 @@ class ManipulateCommand extends Command
      */
     protected function configure()
     {
-        $this->setDescription('Transporter: Manipulate for a specific Type');
+        $this->setDescription('Transporter: Download dequeue for a specific Type and ActivityId');
         $this->addArgument(
             self::TYPE,
             InputArgument::REQUIRED,
-            'ManipulatorList Type name'
+            'DownloaderList Type'
+        );
+        $this->addArgument(
+            self::ACTIVITY_ID,
+            InputArgument::REQUIRED,
+            'ActivityId'
         );
         parent::configure();
     }
@@ -78,22 +84,15 @@ class ManipulateCommand extends Command
     {
         $this->consoleLogger->setConsoleOutput($output);
         $type = $input->getArgument(self::TYPE);
-        $this->manipulateAction->execute($type);
-    }
+        $activityId = (int)$input->getArgument(self::ACTIVITY_ID);
 
-    /**
-     * @return string
-     */
-    public function getHelp()
-    {
-        $text = [];
-        $text[] = __('Available ManipulatorList types: ')->getText();
-        $allManipulatorList = $this->transporterList->getAllManipulatorList();
-        foreach ($allManipulatorList as $name => $manipulatorList) {
-            $text[] = $name;
-            $text[] = ', ';
-        }
-        array_pop($text);
-        return implode('', $text);
+        $downloaderInfo = $this->downloaderInfoFactory->create(
+            [
+                'activity_id' => $activityId,
+                'downloader_type' => $type
+            ]
+        );
+
+        $this->downloaderConsumer->process($downloaderInfo);
     }
 }

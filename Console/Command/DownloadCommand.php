@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright © Websolute spa. All rights reserved.
- * See COPYING.txt for license details.
+ * See LICENSE and/or COPYING.txt for license details.
  */
 
 declare(strict_types=1);
@@ -19,6 +19,10 @@ use Websolute\TransporterBase\Model\Action\DownloadAction;
 
 class DownloadCommand extends Command
 {
+    /** @var string */
+    const EXTRA = 'extra';
+
+    /** @var string */
     const TYPE = 'type';
 
     /**
@@ -37,21 +41,57 @@ class DownloadCommand extends Command
     private $transporterList;
 
     /**
-     * @param null $name
      * @param DownloadAction $downloadAction
      * @param Console $consoleLogger
      * @param TransporterListInterface $transporterList
+     * @param string $name
      */
     public function __construct(
-        $name = null,
         DownloadAction $downloadAction,
         Console $consoleLogger,
-        TransporterListInterface $transporterList
+        TransporterListInterface $transporterList,
+        $name = null
     ) {
         parent::__construct($name);
         $this->downloadAction = $downloadAction;
         $this->consoleLogger = $consoleLogger;
         $this->transporterList = $transporterList;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function configure()
+    {
+        $this->setDescription('Transporter: Download for a specific Type');
+
+        $this->addArgument(
+            self::TYPE,
+            InputArgument::REQUIRED,
+            'DownloaderList Type name'
+        );
+
+        $this->addArgument(
+            self::EXTRA,
+            InputArgument::OPTIONAL,
+            'Extra data'
+        );
+
+        parent::configure();
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|void|null
+     * @throws Exception
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->consoleLogger->setConsoleOutput($output);
+        $type = $input->getArgument(self::TYPE);
+        $extra = $input->getArgument(self::EXTRA);
+        $this->downloadAction->execute($type, $extra);
     }
 
     /**
@@ -68,32 +108,5 @@ class DownloadCommand extends Command
         }
         array_pop($text);
         return implode('', $text);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function configure()
-    {
-        $this->setDescription('Transporter: Download for a specific Type');
-        $this->addArgument(
-            self::TYPE,
-            InputArgument::REQUIRED,
-            'DownloaderList Type name'
-        );
-        parent::configure();
-    }
-
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|void|null
-     * @throws Exception
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $this->consoleLogger->setConsoleOutput($output);
-        $type = $input->getArgument(self::TYPE);
-        $this->downloadAction->execute($type);
     }
 }

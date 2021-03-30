@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright © Websolute spa. All rights reserved.
- * See COPYING.txt for license details.
+ * See LICENSE and/or COPYING.txt for license details.
  */
 
 declare(strict_types=1);
@@ -37,37 +37,21 @@ class UploadCommand extends Command
     private $transporterList;
 
     /**
-     * @param null $name
      * @param UploadAction $uploadAction
      * @param Console $consoleLogger
      * @param TransporterListInterface $transporterList
+     * @param string $name
      */
     public function __construct(
-        $name = null,
         UploadAction $uploadAction,
         Console $consoleLogger,
-        TransporterListInterface $transporterList
+        TransporterListInterface $transporterList,
+        $name = null
     ) {
         parent::__construct($name);
         $this->uploadAction = $uploadAction;
         $this->consoleLogger = $consoleLogger;
         $this->transporterList = $transporterList;
-    }
-
-    /**
-     * @return string
-     */
-    public function getHelp()
-    {
-        $text = [];
-        $text[] = __('Available UploaderList types: ')->getText();
-        $allUplaoderList = $this->transporterList->getAllUploaderList();
-        foreach ($allUplaoderList as $name => $uplaoderList) {
-            $text[] = $name;
-            $text[] = ', ';
-        }
-        array_pop($text);
-        return implode('', $text);
     }
 
     /**
@@ -95,5 +79,21 @@ class UploadCommand extends Command
         $this->consoleLogger->setConsoleOutput($output);
         $type = $input->getArgument(self::TYPE);
         $this->uploadAction->execute($type);
+    }
+
+    /**
+     * @return string
+     */
+    public function getHelp()
+    {
+        $text = [];
+        $text[] = __('Available UploaderList types: ')->getText();
+        $allUplaoderList = $this->transporterList->getAllUploaderList();
+        foreach ($allUplaoderList as $name => $uplaoderList) {
+            $text[] = $name;
+            $text[] = ', ';
+        }
+        array_pop($text);
+        return implode('', $text);
     }
 }
