@@ -74,7 +74,8 @@ class DownloadCommand extends Command
         $this->addArgument(
             self::EXTRA,
             InputArgument::OPTIONAL,
-            'Extra data'
+            'Extra data',
+            ''
         );
 
         parent::configure();
